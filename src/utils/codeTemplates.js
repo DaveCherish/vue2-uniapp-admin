@@ -338,8 +338,7 @@ export default {
                   config.type === 'checkbox' ? [] :
                     config.type === 'switch' ? false : '';
             return `${config.field}: ${JSON.stringify(defaultValue)}`;
-          }).join(',\n          ')}
-          ${formFieldsConfig.some(config => config.type === 'rich-text') ? ',\n          editor: ClassicEditor' : ''}
+          }).join(',\n          ')}${formFieldsConfig.some(config => config.type === 'rich-text') ? ',\n          editor: ClassicEditor' : ''}
         },
         formRules: {
           ${formFieldsConfig
@@ -430,8 +429,7 @@ export default {
           } else {
             return `${config.field}: row.${config.field} || ${config.type === 'checkbox' ? '[]' : config.type === 'switch' ? 'false' : "''"}`;
           }
-        }).join(',\n        ')}
-        ${formFieldsConfig.some(config => config.type === 'rich-text') ? ',\n        editor: ClassicEditor' : ''}
+        }).join(',\n        ')}${formFieldsConfig.some(config => config.type === 'rich-text') ? ',\n        editor: ClassicEditor' : ''}
       };
       this.dialogVisible = true;
     },
@@ -499,8 +497,7 @@ export default {
                 config.type === 'checkbox' ? [] :
                   config.type === 'switch' ? false : '';
           return `${config.field}: ${JSON.stringify(defaultValue)}`;
-        }).join(',\n        ')}
-        ${formFieldsConfig.some(config => config.type === 'rich-text') ? ',\n        editor: ClassicEditor' : ''}
+        }).join(',\n        ')}${formFieldsConfig.some(config => config.type === 'rich-text') ? ',\n        editor: ClassicEditor' : ''}
       };
       ${formFieldsConfig.some(config => config.type === 'upload' && (config.uploadType || 'single') === 'single') ? 'this.singleImageList = [];' : ''}
       ${formFieldsConfig.some(config => config.type === 'upload' && config.uploadType === 'multi') ? 'this.multiImageList = [];' : ''}
@@ -571,10 +568,10 @@ export default {
 
 // 弹框表单样式
 .form-dialog {
-  margin-top: 7vh !important;
+  margin-top: 5vh !important;
   
   .el-dialog__body {
-    max-height: 650px;
+    max-height: 600px;
     overflow-y: auto;
     padding: 20px 25px;
   }
