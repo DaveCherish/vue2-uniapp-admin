@@ -1,0 +1,136 @@
+// 搜索表单样式优化
+.list-page .search-form {
+  background-color: #ffffff;
+  padding: 20px 24px 0 24px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  border: 1px solid #f0f0f0;
+  transition: all 0.3s ease;
+
+  .el-form-item {
+    display: flex;
+
+    .el-form-item__content .el-date-editor .el-range-separator {
+      width: 7%;
+    }
+
+    &:last-child {
+      display: flex;
+      align-items: center; 
+      gap: 12px;
+      min-width: auto;
+    }
+
+    .el-form-item__label {
+      font-weight: 500;
+      color: #303133;
+      padding-right: 12px;
+      white-space: nowrap;
+    }
+  }
+
+  .list-page .el-input__wrapper,
+  .list-page .el-select__wrapper,
+  .list-page .el-date-editor {
+    border-radius: 6px;
+    border: 1px solid #dcdfe6;
+    transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+    background-color: #ffffff;
+
+    &:hover {
+      border-color: #c0c4cc;
+      box-shadow: 0 0 0 2px rgba(48, 163, 255, 0.1);
+    }
+
+    &.is-focused {
+      border-color: #409eff;
+      box-shadow: 0 0 0 2px rgba(48, 163, 255, 0.2);
+      outline: none;
+    }
+  }
+
+  .list-page .el-input__inner,
+  .list-page .el-select__placeholder,
+  .list-page .el-select__input,
+  .list-page .el-date-editor .el-input__inner {
+    color: #303133;
+    font-size: 14px;
+    border-radius: 6px;
+  }
+
+  .list-page .el-button {
+    padding: 10px 24px;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+    font-size: 14px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 100px;
+
+    &.el-button--primary {
+      background-color: #409eff;
+      border-color: #409eff;
+      color: #ffffff;
+
+      &:hover {
+        background-color: #66b1ff;
+        border-color: #66b1ff;
+        transform: translateY(-1px);
+      }
+
+      &:active {
+        background-color: #3a8ee6;
+        border-color: #3a8ee6;
+        transform: translateY(0);
+      }
+    }
+
+    &:not(.el-button--primary) {
+      background-color: #f5f7fa;
+      border-color: #e4e7ed;
+      color: #606266;
+
+      &:hover {
+        background-color: #eef2f7;
+        border-color: #dcdfe6;
+        transform: translateY(-1px);
+      }
+
+      &:active {
+        background-color: #e6eaf1;
+        border-color: #dcdfe6;
+        transform: translateY(0);
+      }
+    }
+  }
+}
+
+// 响应式调整
+@media screen and (max-width: 768px) {
+  .list-page .search-form {
+    padding: 16px 18px;
+    gap: 16px;
+
+    .el-form-item {
+      min-width: 100%;
+
+      &:last-child {
+        margin-left: 0;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+      }
+    }
+
+    .el-button {
+      flex: 1;
+      min-width: auto;
+    }
+  }
+}

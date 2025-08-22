@@ -1,0 +1,81 @@
+.list-page{
+  padding: 0;
+}
+
+.list-page .el-table__column--width-auto {
+  flex: 1;
+}
+
+
+.list-page .el-card__header .clearfix {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+// 表格容器样式
+.list-page .table-wrapper {
+  overflow: hidden;
+  position: relative;
+  border-radius: 12px;
+  border: 1px solid #f0f0f0;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  }
+  
+  .list-page .el-table {
+    width: 100% !important;
+    overflow-x: auto;
+    border-radius: 12px 12px 0 0;
+    
+    // 修复操作栏右侧多余空间
+    .el-table__fixed-right {
+      right: 0 !important;
+      box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .list-page .el-table th {
+    background-color: #f5f7fa;
+    color: #303133;
+    font-weight: 500;
+    padding: 12px 0;
+    border-bottom: 1px solid #e4e7ed;
+  }
+
+  .list-page .el-table tr {
+    transition: background-color 0.2s;
+
+    &:hover > td {
+      background-color: #f9fafb;
+    }
+  }
+
+  .list-page .el-table td {
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+    color: #606266;
+  }
+}
+
+
+
+/* 列表页图片样式 */
+.list-image {
+  width: 40px;
+  height: 40px;
+}
+
+.image-grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/* 列表页开关样式 */
+.el-table .el-switch {
+  margin: 0 auto;
+}

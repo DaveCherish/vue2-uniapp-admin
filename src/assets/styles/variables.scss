@@ -1,0 +1,57 @@
+// 全局颜色变量
+$primary-color: #409eff;
+$success-color: #67c23a;
+$warning-color: #e6a23c;
+$danger-color: #f56c6c;
+$info-color: #909399;
+
+// 浅色系列
+$primary-light: #E6F7FF;
+$success-light: #F0F9EB;
+$danger-light: #FEF0F0;
+$warning-light: #FFF7E6;
+
+// 文本颜色
+$text-color: #1D2129;
+$text-color-secondary: #6B7280;
+$text-color-placeholder: #86909C;
+
+// 边框颜色
+$border-color: #E5E6EB;
+
+// 背景色扩展
+$bg-color-hover: #F7F8FA;
+$bg-color-light: #F2F3F5;
+
+// 阴影
+$shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+$card-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.08);
+
+// 过渡效果
+$transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+// 全局背景色
+$bg-color: #f0f2f5;
+$card-bg: #ffffff;
+
+// 字体大小
+$font-size-xs: 12px;
+$font-size-sm: 14px;
+$font-size-md: 16px;
+$font-size-lg: 18px;
+$font-size-xl: 20px;
+
+// 间距
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+
+// 边框半径
+$border-radius-sm: 4px;
+$border-radius-md: 6px;
+$border-radius-lg: 8px;
+
+// 额外变量
+$radius: 8px;

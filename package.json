@@ -1,0 +1,34 @@
+{
+  "name": "vue2-uniapp-admin",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build"
+  },
+  "dependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^41.4.2",
+    "@ckeditor/ckeditor5-vue2": "^3.0.1",
+    "axios": "^0.27.2",
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "echarts": "^4.9.0",
+    "element-ui": "^2.15.14",
+    "express": "^5.1.0",
+    "mockjs": "^1.1.0",
+    "quill": "^1.3.7",
+    "vue": "^2.6.14",
+    "vue-echarts": "^4.1.0",
+    "vue-quill-editor": "^3.0.6",
+    "vue-router": "^3.5.4",
+    "vuedraggable": "^2.24.3",
+    "vuex": "^3.6.2"
+  },
+  "devDependencies": {
+    "@vue/cli-service": "~4.5.19",
+    "babel-plugin-component": "^1.1.1",
+    "sass": "^1.32.8",
+    "sass-loader": "^8.0.2",
+    "vue-template-compiler": "^2.6.14"
+  }
+}

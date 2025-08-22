@@ -1,0 +1,153 @@
+.form-page {
+  padding: 24px;
+  background-color: #FFFFFF;
+  min-height: 100vh;
+}
+
+.form-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 20px;
+  margin-top: 0;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+}
+
+.form-title::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 20px;
+  background-color: #409eff;
+  margin-right: 8px;
+  border-radius: 4px;
+}
+
+.form-container {
+  width: 100%;
+  padding: 20px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+
+.upload-demo {
+  width: 100%;
+}
+
+/* 上传组件样式优化 */
+.el-upload--picture-card {
+  width: 148px;
+  height: 148px;
+  line-height: 146px;
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s;
+
+  &:hover {
+    border-color: #409eff;
+  }
+}
+
+.el-upload-list--picture-card {
+  .el-upload-list__item {
+    width: 148px;
+    height: 148px;
+    border-radius: 6px;
+    overflow: hidden;
+
+    .el-upload-list__item-thumbnail {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+}
+
+/* 表单样式优化 */
+.el-form-item {
+  margin-bottom: 24px;
+}
+
+.el-form-item__label {
+  font-weight: 600;
+  color: #4b5563;
+  font-size: 14px;
+}
+
+.el-input__inner,
+.el-textarea__inner,
+.el-select__inner {
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  padding: 10px 14px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.el-input__inner:focus,
+.el-textarea__inner:focus,
+.el-select__inner:focus {
+  border-color: #409eff;
+  box-shadow: 0 0 0 3px rgba(64, 158, 255, 0.2);
+  outline: none;
+}
+
+.el-select,
+.el-date-editor {
+  width: 100%;
+}
+
+/* 响应式设计优化 */
+@media (max-width: 768px) {
+  .form-page {
+    padding: 15px;
+  }
+
+  .form-container {
+    padding: 20px;
+  }
+
+  .form-title {
+    font-size: 24px;
+  }
+
+  .el-form-item {
+    margin-bottom: 16px;
+  }
+}
+
+/* 设置富文本编辑区域的高度 */
+.ck-editor__editable {
+  min-height: 500px; /* 编辑区域最小高度 */
+  max-height: 700px; /* 也可以加上最大高度 */
+  overflow-y: auto;  /* 超出滚动 */
+}
+
+.form-buttons {
+  margin-top: 30px;
+  display: flex;
+  gap: 10px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .form-container {
+    padding: 15px;
+    margin: 10px;
+
+    :deep(.el-upload--picture-card),
+    :deep(.el-upload-list--picture-card .el-upload-list__item) {
+      width: 120px;
+      height: 120px;
+    }
+  }
+}
