@@ -23,11 +23,6 @@ export const constantRoutes = [
     hidden: true
   },
   {
-    path: '/test-login',
-    component: () => import('@/views/test-login.vue'),
-    hidden: true
-  },
-  {
     path: '/',
     component: Layout,
     redirect: '/index',
@@ -111,7 +106,7 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
 
-  if (to.path === '/login' || to.path === '/test-login') {
+  if (to.path === '/login') {
     if (token && to.path === '/login') {
       next('/')
     } else {
