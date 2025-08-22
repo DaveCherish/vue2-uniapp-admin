@@ -9,7 +9,16 @@
  * @returns {string} 生成的列表页代码
  */
 export function generateListPage(options) {
-  const { pageName, moduleName = pageName.replace(/^[a-z]+_/, ''), tableFields, displayFields, searchFields, fieldsConfig } = options;
+  const { 
+    pageName, 
+    moduleName = pageName.replace(/^[a-z]+_/, ''), 
+    tableFields, 
+    displayFields, 
+    searchFields, 
+    fieldsConfig,
+    formFieldsConfig = [],
+    enableFormFeature = false
+  } = options;
 
   // 首字母大写
   const capitalizedPageName = pageName.charAt(0).toUpperCase() + pageName.slice(1);
@@ -155,9 +164,9 @@ export function generateListPage(options) {
     </el-card>
 
     <!-- 表单弹框 -->
-    <el-dialog :title="formTitle" :visible.sync="dialogVisible" width="600px" :close-on-click-modal="false">
-      <el-form ref="form" :model="formData" label-width="120px" :rules="formRules">
-        ${fieldsConfig.map(config => {
+    ${enableFormFeature ? `<el-dialog :title="formTitle" :visible.sync="dialogVisible" width="81vh" :close-on-click-modal="false" custom-class="form-dialog">
+      <el-form ref="form" :model="formData" label-width="120px" :rules="formRules" class="form-container">
+        ${formFieldsConfig.map(config => {
           const { field, label, type, required, placeholder, options } = config;
           const fieldInfo = tableFields.find(f => f.name === field);
           const isPrimary = fieldInfo && fieldInfo.isPrimaryKey;
@@ -271,7 +280,7 @@ export function generateListPage(options) {
           } else if (type === 'rich-text') {
             return `
         <el-form-item label="${label}" prop="${field}">
-          <ckeditor :editor="formData.editor" v-model="formData.${field}" />
+          <ckeditor :editor="formData.editor" v-model="formData.${field}" :config="editorConfig" class="rich-text-editor" />
         </el-form-item>`;
           } else {
             return `
@@ -282,24 +291,24 @@ export function generateListPage(options) {
         }).join('')}
       </el-form>
       
-      ${fieldsConfig.some(config => config.type === 'upload') ? '<!-- 图片预览组件 -->\n      <image-preview ref="imagePreview"></image-preview>' : ''}
+      ${formFieldsConfig.some(config => config.type === 'upload') ? '<!-- 图片预览组件 -->\n      <image-preview ref="imagePreview"></image-preview>' : ''}
       
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleCancel">取消</el-button>
         <el-button type="primary" @click="handleSubmit" :loading="submitLoading">确定</el-button>
       </div>
-    </el-dialog>
+    </el-dialog>` : ''}
   </div>
 </template>
 
 <script>
 import Pagination from '@/components/Pagination.vue'
-${fieldsConfig.some(config => config.type === 'upload') ? "import ImagePreview from '@/components/ImagePreview.vue'" : ''}
-${fieldsConfig.some(config => config.type === 'rich-text') ? "import CKEditor from '@ckeditor/ckeditor5-vue2'\nimport ClassicEditor from '@ckeditor/ckeditor5-build-classic'" : ''}
+${enableFormFeature && formFieldsConfig.some(config => config.type === 'upload') ? "import ImagePreview from '@/components/ImagePreview.vue'" : ''}
+${enableFormFeature && formFieldsConfig.some(config => config.type === 'rich-text') ? "import CKEditor from '@ckeditor/ckeditor5-vue2'\nimport ClassicEditor from '@ckeditor/ckeditor5-build-classic'" : ''}
 
 export default {
   components: {
-    Pagination${fieldsConfig.some(config => config.type === 'upload') ? ', ImagePreview' : ''}${fieldsConfig.some(config => config.type === 'rich-text') ? ', ckeditor: CKEditor.component' : ''}
+    Pagination${enableFormFeature && formFieldsConfig.some(config => config.type === 'upload') ? ', ImagePreview' : ''}${enableFormFeature && formFieldsConfig.some(config => config.type === 'rich-text') ? ', ckeditor: CKEditor.component' : ''}
   },
   data() {
       return {
@@ -313,7 +322,7 @@ export default {
           currentPage: 1,
           pageSize: 10,
           total: 0
-        },
+        }${enableFormFeature ? `,
         // 表单相关数据
         dialogVisible: false,
         formTitle: '',
@@ -321,7 +330,7 @@ export default {
         submitLoading: false,
         formData: {
           ${primaryKeyField.name}: '',
-          ${fieldsConfig.map(config => {
+          ${formFieldsConfig.map(config => {
             const fieldInfo = tableFields.find(f => f.name === config.field);
             const defaultValue = fieldInfo && fieldInfo.isPrimaryKey ? '' :
               fieldInfo && fieldInfo.type.includes('int') ? '' :
@@ -330,18 +339,22 @@ export default {
                     config.type === 'switch' ? false : '';
             return `${config.field}: ${JSON.stringify(defaultValue)}`;
           }).join(',\n          ')}
-          ${fieldsConfig.some(config => config.type === 'rich-text') ? ',\n          editor: ClassicEditor' : ''}
+          ${formFieldsConfig.some(config => config.type === 'rich-text') ? ',\n          editor: ClassicEditor' : ''}
         },
         formRules: {
-          ${fieldsConfig
+          ${formFieldsConfig
             .filter(config => config.required)
             .map(config => `${config.field}: [
             { required: true, message: '请输入${config.label}', trigger: 'blur' }
           ]`)
             .join(',\n          ')}
-        }
-        ${fieldsConfig.some(config => config.type === 'upload' && (config.uploadType || 'single') === 'single') ? ',\n        singleImageList: []' : ''}
-        ${fieldsConfig.some(config => config.type === 'upload' && config.uploadType === 'multi') ? ',\n        multiImageList: []' : ''}
+        }${formFieldsConfig.some(config => config.type === 'rich-text') ? `,
+        // 富文本编辑器配置
+        editorConfig: {
+          height: 300
+        }` : ''}
+        ${formFieldsConfig.some(config => config.type === 'upload' && (config.uploadType || 'single') === 'single') ? ',\n        singleImageList: []' : ''}
+        ${formFieldsConfig.some(config => config.type === 'upload' && config.uploadType === 'multi') ? ',\n        multiImageList: []' : ''}` : ''}
       };
     },
     filters: {
@@ -394,7 +407,7 @@ export default {
       this.pagination.currentPage = data.page;
       this.pagination.pageSize = data.limit;
       this.loadList();
-    },
+    }${enableFormFeature ? `,
 
     // 新增
     handleAdd() {
@@ -410,7 +423,7 @@ export default {
       this.isEdit = true;
       // 赋值表单数据
       this.formData = {
-        ${fieldsConfig.map(config => {
+        ${formFieldsConfig.map(config => {
           const fieldInfo = tableFields.find(f => f.name === config.field);
           if (fieldInfo && fieldInfo.isPrimaryKey) {
             return `${config.field}: row.${config.field}`;
@@ -418,7 +431,7 @@ export default {
             return `${config.field}: row.${config.field} || ${config.type === 'checkbox' ? '[]' : config.type === 'switch' ? 'false' : "''"}`;
           }
         }).join(',\n        ')}
-        ${fieldsConfig.some(config => config.type === 'rich-text') ? ',\n        editor: ClassicEditor' : ''}
+        ${formFieldsConfig.some(config => config.type === 'rich-text') ? ',\n        editor: ClassicEditor' : ''}
       };
       this.dialogVisible = true;
     },
@@ -446,9 +459,9 @@ export default {
         if (valid) {
           this.submitLoading = true;
           
-          ${fieldsConfig.some(config => config.type === 'upload') ? `
+          ${formFieldsConfig.some(config => config.type === 'upload') ? `
           // 处理上传文件
-          ${fieldsConfig.filter(config => config.type === 'upload').map(config => {
+          ${formFieldsConfig.filter(config => config.type === 'upload').map(config => {
             const uploadType = config.uploadType || 'single';
             return `
           if (this.${uploadType}ImageList.length > 0) {
@@ -478,7 +491,7 @@ export default {
     resetForm() {
       this.formData = {
         ${primaryKeyField.name}: '',
-        ${fieldsConfig.map(config => {
+        ${formFieldsConfig.map(config => {
           const fieldInfo = tableFields.find(f => f.name === config.field);
           const defaultValue = fieldInfo && fieldInfo.isPrimaryKey ? '' :
             fieldInfo && fieldInfo.type.includes('int') ? '' :
@@ -487,19 +500,19 @@ export default {
                   config.type === 'switch' ? false : '';
           return `${config.field}: ${JSON.stringify(defaultValue)}`;
         }).join(',\n        ')}
-        ${fieldsConfig.some(config => config.type === 'rich-text') ? ',\n        editor: ClassicEditor' : ''}
+        ${formFieldsConfig.some(config => config.type === 'rich-text') ? ',\n        editor: ClassicEditor' : ''}
       };
-      ${fieldsConfig.some(config => config.type === 'upload' && (config.uploadType || 'single') === 'single') ? 'this.singleImageList = [];' : ''}
-      ${fieldsConfig.some(config => config.type === 'upload' && config.uploadType === 'multi') ? 'this.multiImageList = [];' : ''}
+      ${formFieldsConfig.some(config => config.type === 'upload' && (config.uploadType || 'single') === 'single') ? 'this.singleImageList = [];' : ''}
+      ${formFieldsConfig.some(config => config.type === 'upload' && config.uploadType === 'multi') ? 'this.multiImageList = [];' : ''}
       // 清除验证
       this.$nextTick(() => {
         if (this.$refs.form) {
           this.$refs.form.clearValidate();
         }
       });
-    }
+    },` : ','}${enableFormFeature && formFieldsConfig.some(config => config.type === 'upload') ? `
 
-${fieldsConfig.some(config => config.type === 'upload') ? `    // 预览图片
+    // 预览图片
     handlePreview(file, type) {
       // 获取当前文件在列表中的索引
       let currentIndex = 0;
@@ -517,9 +530,8 @@ ${fieldsConfig.some(config => config.type === 'upload') ? `    // 预览图片
       // 调用预览组件
       const imageUrls = allImages.map(f => f.url || URL.createObjectURL(f.raw));
       this.$refs.imagePreview.openPreview(imageUrls, currentIndex);
-    },` : ''}
+    },` : ''}${enableFormFeature && formFieldsConfig.some(config => config.type === 'upload' && (config.uploadType || 'single') === 'single') ? `
 
-    ${fieldsConfig.some(config => config.type === 'upload' && (config.uploadType || 'single') === 'single') ? `
     // 单图上传变化处理
     handleSingleChange(file, fileList) {
       fileList.forEach(file => {
@@ -533,10 +545,8 @@ ${fieldsConfig.some(config => config.type === 'upload') ? `    // 预览图片
     // 单图删除处理
     handleRemoveSingle(file, fileList) {
       this.singleImageList = fileList;
-    },
-    ` : ''}
+    },` : ''}${enableFormFeature && formFieldsConfig.some(config => config.type === 'upload' && config.uploadType === 'multi') ? `
 
-    ${fieldsConfig.some(config => config.type === 'upload' && config.uploadType === 'multi') ? `
     // 多图上传变化处理
     handleMultiChange(file, fileList) {
       fileList.forEach(file => {
@@ -550,8 +560,7 @@ ${fieldsConfig.some(config => config.type === 'upload') ? `    // 预览图片
     // 多图删除处理
     handleRemoveMulti(file, fileList) {
       this.multiImageList = fileList;
-    },
-    ` : ''}
+    },` : ''}
   }
 };
 </script>
@@ -559,6 +568,21 @@ ${fieldsConfig.some(config => config.type === 'upload') ? `    // 预览图片
 <style lang="scss">
 @import '@/assets/styles/search-form.scss';
 @import '@/assets/styles/table.scss';
+
+// 弹框表单样式
+.form-dialog {
+  margin-top: 7vh !important;
+  
+  .el-dialog__body {
+    max-height: 650px;
+    overflow-y: auto;
+    padding: 20px 25px;
+  }
+  
+  .form-container {
+    max-height: 100%;
+  }
+}
 </style>`;
 }
 

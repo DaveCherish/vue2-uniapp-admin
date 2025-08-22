@@ -41,28 +41,12 @@ export const constantRoutes = [
     ]
   },
   {
-    path: '/list',
+    path: '/service',
     component: Layout,
     children: [
       {
         path: 'index',
-        alias: 'list',
-        name: 'List',
-        component: () => import('@/views/list/index.vue'),
-        meta: { title: '列表页', icon: 'el-icon-document' }
-      }
-    ]
-  },
-  {
-    path: '/form',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        alias: 'form',
-        name: 'Form',
-        component: () => import('@/views/form/index.vue'),
-        meta: { title: '表单页', icon: 'el-icon-edit' }
+        component: () => import('@/views/service/index.vue'),
       }
     ]
   },

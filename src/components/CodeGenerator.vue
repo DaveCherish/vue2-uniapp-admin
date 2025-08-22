@@ -26,9 +26,10 @@
         <el-form-item label="生成选项">
           <el-checkbox-group v-model="formData.generateOptions">
             <el-checkbox label="list" border>生成列表页</el-checkbox>
-            <el-checkbox label="form" border>生成表单页</el-checkbox>
+            <el-checkbox label="form" border>启用表单功能（在列表页弹框中）</el-checkbox>
             <!-- <el-checkbox label="controller" border>生成控制器</el-checkbox> -->
           </el-checkbox-group>
+          <div class="tip-text">注意：勾选"启用表单功能"将在列表页中生成新增/编辑弹框，不再生成独立的表单页面文件</div>
         </el-form-item>
 
         <!-- 字段名称统一配置 -->
@@ -101,16 +102,13 @@
           </el-collapse-item>
         </el-collapse>
 
-        <!-- 表单页配置 -->
+        <!-- 表单功能配置 -->
         <el-collapse v-if="formData.generateOptions.includes('form')">
-          <el-collapse-item title="表单页配置">
+          <el-collapse-item title="表单功能配置（列表页弹框）">
             <el-form-item label="页面名称">
               <el-input v-model="formData.formConfig.pageName" placeholder="例如: service"></el-input>
             </el-form-item>
-            <el-form-item label="页面路径">
-              <el-input v-model="formData.formConfig.pagePath" placeholder="例如: src/views/service/form.vue"></el-input>
-              <div class="tip-text">默认: src/views/去前缀后的表名/form.vue</div>
-            </el-form-item>
+            <div class="tip-text">注意：表单功能将集成在列表页的新增/编辑弹框中，不会生成独立的form.vue文件</div>
             <el-form-item label="表单字段">
               <div v-if="tableFields.length > 0">
                 <el-table :data="formData.formConfig.fieldsConfig" border>
@@ -209,7 +207,6 @@ export default {
 
           // 设置默认页面路径
           this.formData.listConfig.pagePath = `src/views/${withoutPrefixTableName}/index.vue`;
-          this.formData.formConfig.pagePath = `src/views/${withoutPrefixTableName}/form.vue`;
         }
 
         console.log(result.fields)
@@ -340,6 +337,10 @@ export default {
             }
           });
 
+          // 用于表单功能的字段配置
+          const formFieldsConfig = this.formData.generateOptions.includes('form') 
+            ? this.formData.formConfig.fieldsConfig 
+            : [];
 
           const listCode = generateListPage({
             pageName: this.formData.listConfig.pageName,
@@ -347,7 +348,9 @@ export default {
             tableFields: this.tableFields,
             displayFields: this.formData.listConfig.displayFields,
             searchFields: this.formData.listConfig.searchFields,
-            fieldsConfig: mergedFieldsConfig
+            fieldsConfig: mergedFieldsConfig,
+            formFieldsConfig: formFieldsConfig,
+            enableFormFeature: this.formData.generateOptions.includes('form')
           });
           this.generatedFiles.push({
             name: this.formData.listConfig.pagePath,
@@ -356,23 +359,8 @@ export default {
           });
         }
 
-        // 生成表单页
-        if (this.formData.generateOptions.includes('form')) {
-          // 提取页面模块名（从路径中获取）
-          const moduleName = this.formData.formConfig.pagePath.split('/')[2];
-          
-          const formCode = generateFormPage({
-            pageName: this.formData.formConfig.pageName,
-            moduleName: moduleName,
-            tableFields: this.tableFields,
-            fieldsConfig: this.formData.formConfig.fieldsConfig
-          });
-          this.generatedFiles.push({
-            name: this.formData.formConfig.pagePath,
-            content: formCode,
-            language: 'vue'
-          });
-        }
+        // 不再生成独立的表单页文件
+        // 表单功能已集成在列表页中
 
         this.$message.success('代码生成成功');
       } catch (error) {

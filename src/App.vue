@@ -47,6 +47,11 @@ export default { name: 'App' }
   }
 }
 
+// 富文本编辑区域默认高度
+.ck-editor__editable_inline{
+  height: 400px !important;
+}
+
 // 弹出框底部按钮区域样式
 .dialog-footer {
   padding: 15px 24px;
