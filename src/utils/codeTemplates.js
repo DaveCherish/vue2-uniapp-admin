@@ -158,8 +158,12 @@ export function generateListPage(options) {
 
       <!-- 分页组件 -->
       <template v-if="list && list.length > 0">
-        <Pagination :total="pagination.total" :page="pagination.currentPage" :limit="pagination.pageSize"
-          @pagination="handlePagination" />
+        <pagination
+          :total="pagination.total"
+          :page.sync="pagination.currentPage"
+          :pageSize.sync="pagination.pageSize"
+          @pagination="handlePagination"
+        />
       </template>
     </el-card>
 
@@ -403,8 +407,7 @@ export default {
 
     // 分页处理
     handlePagination(data) {
-      this.pagination.currentPage = data.page;
-      this.pagination.pageSize = data.limit;
+      // 通过.sync修饰符，page和pageSize已经自动同步，这里只需要重新获取数据
       this.loadList();
     }${enableFormFeature ? `,
 

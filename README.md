@@ -356,7 +356,228 @@ export default {
 - 组件内部已处理数据深拷贝，避免直接修改原始数据
 - 排序完成后需手动刷新菜单列表
 
-### 12. 规格管理 (Specification Manager)
+### 12. 分页组件 (Pagination)
+本项目提供了一个功能完善的分页组件，支持页码切换、每页条数设置、自动重置页码等功能。
+
+#### 基础使用
+```html
+<!-- 在列表页中使用分页组件 -->
+<pagination
+  :total="total"
+  :page.sync="page"
+  :pageSize.sync="pageSize"
+  @pagination="handlePagination"
+/>
+```
+
+```javascript
+// 1. 引入分页组件
+import Pagination from '@/components/Pagination.vue'
+
+export default {
+  components: {
+    Pagination
+  },
+  data() {
+    return {
+      list: [], // 列表数据
+      total: 0, // 总条数
+      page: 1, // 当前页码
+      pageSize: 10, // 每页条数
+    }
+  },
+  methods: {
+    // 分页处理方法
+    handlePagination(data) {
+      // 这里请求列表接口
+    }
+  }
+}
+```
+
+#### 组件属性说明
+
+| 属性名 | 类型 | 默认值 | 说明 |
+|--------|------|--------|------|
+| total | Number | 0 | 总条目数（必传） |
+| page | Number | 1 | 当前页码 |
+| pageSize | Number | 10 | 每页条数 |
+| pageSizes | Array | [1, 2, 50, 100] | 每页条数选择器的选项设置 |
+| layout | String | 'total, sizes, prev, pager, next, jumper' | 分页布局 |
+| autoFetch | Boolean | true | 是否自动触发查询 |
+
+#### 组件事件说明
+
+| 事件名 | 说明 | 回调参数 |
+|--------|------|----------|
+| pagination | 分页参数改变时触发 | { page: Number, pageSize: Number } |
+| update:page | 页码更新事件（配合.sync使用） | page: Number |
+| update:pageSize | 每页条数更新事件（配合.sync使用） | pageSize: Number |
+
+#### 高级使用示例
+
+```vue
+<template>
+  <div class="list-page">
+    <!-- 搜索区域 -->
+    <el-card class="search-card">
+      <el-form :inline="true" :model="searchForm">
+        <el-form-item label="关键词">
+          <el-input v-model="searchForm.keyword" placeholder="请输入关键词" clearable></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="handleSearch">搜索</el-button>
+          <el-button @click="resetSearch">重置</el-button>
+        </el-form-item>
+      </el-form>
+    </el-card>
+    
+    <!-- 列表区域 -->
+    <el-card>
+      <el-table :data="list" v-loading="listLoading">
+        <el-table-column prop="id" label="ID" width="80"></el-table-column>
+        <el-table-column prop="name" label="名称"></el-table-column>
+        <el-table-column prop="createTime" label="创建时间"></el-table-column>
+        <el-table-column label="操作" width="180">
+          <template slot-scope="scope">
+            <el-button type="primary" size="small" @click="handleEdit(scope.row)">编辑</el-button>
+            <el-button type="danger" size="small" @click="handleDelete(scope.row.id)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      
+      <!-- 分页组件 -->
+      <pagination
+        :total="total"
+        :page.sync="page"
+        :pageSize.sync="pageSize"
+        :pageSizes="[10, 20, 50, 100]"
+        @pagination="handlePagination"
+      />
+    </el-card>
+  </div>
+</template>
+
+<script>
+import Pagination from '@/components/Pagination.vue'
+import api from '@/utils/api'
+
+export default {
+  components: {
+    Pagination
+  },
+  data() {
+    return {
+      // 搜索表单
+      searchForm: {
+        keyword: ''
+      },
+      // 列表数据
+      list: [],
+      total: 0,
+      page: 1,
+      pageSize: 10,
+      listLoading: false
+    }
+  },
+  mounted() {
+    this.loadList()
+  },
+  methods: {
+    // 加载列表数据
+    loadList() {
+      this.listLoading = true
+      const params = {
+        page: this.page,
+        pageSize: this.pageSize,
+        ...this.searchForm
+      }
+      
+      api.get('/your-api-endpoint', { params })
+        .then(res => {
+          if (res.result === 1) {
+            this.list = res.data.list
+            this.total = res.data.total
+          } else {
+            this.$message.error(res.msg || '加载数据失败')
+          }
+        })
+        .catch(error => {
+          this.$message.error('网络错误，请重试')
+        })
+        .finally(() => {
+          this.listLoading = false
+        })
+    },
+    
+    // 分页处理
+    handlePagination(data) {
+      // page和pageSize已通过.sync自动更新，直接重新加载数据
+      this.loadList()
+    },
+    
+    // 搜索
+    handleSearch() {
+      this.page = 1 // 搜索时重置到第一页
+      this.loadList()
+    },
+    
+    // 重置搜索
+    resetSearch() {
+      this.searchForm = {
+        keyword: ''
+      }
+      this.page = 1
+      this.loadList()
+    },
+    
+    // 编辑
+    handleEdit(row) {
+      // 编辑逻辑
+    },
+    
+    // 删除
+    handleDelete(id) {
+      this.$confirm('确定要删除这条记录吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // 删除逻辑
+        api.delete(`/your-api-endpoint/${id}`)
+          .then(res => {
+            if (res.result === 1) {
+              this.$message.success('删除成功')
+              this.loadList()
+            } else {
+              this.$message.error(res.msg || '删除失败')
+            }
+          })
+      })
+    }
+  }
+}
+</script>
+```
+
+#### 重要特性说明
+
+1. **自动页码重置**：当切换每页条数时，页码会自动重置为第1页，提供更好的用户体验
+
+2. **双向数据绑定**：使用`.sync`修饰符实现`page`和`pageSize`的双向绑定，简化了数据同步逻辑
+
+3. **灵活配置**：支持自定义每页条数选项、分页布局等
+
+4. **事件机制**：提供`pagination`事件，方便在分页参数变化时执行自定义逻辑
+
+#### 注意事项
+
+- 使用`.sync`修饰符时，确保在Vue 2项目中正确使用语法
+- 分页组件会在切换每页条数时自动重置页码为1
+- 搜索或筛选时建议手动将页码重置为1
+- 确保API接口返回的数据格式包含`list`（数据数组）和`total`（总条数）字段
+
+### 13. 规格管理 (Specification Manager)
 规格管理组件用于管理商品规格和规格值，并支持规格组合的生成。
 
 ```html
