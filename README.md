@@ -285,9 +285,7 @@ editorConfig: {
 
 本项目中的菜单排序功能已被封装成可复用的组件 `SortableList`，该组件基于 Element UI 的拖拽功能实现。
 
-### 组件使用方式
-
-在 `src/views/system/menu/index.vue` 中的使用示例：
+### 12. 列表分页
 
 ```vue
   <!-- 使用排序组件 -->
