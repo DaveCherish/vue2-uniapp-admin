@@ -558,8 +558,8 @@ export default {
               url: item.url,
               icon: item.icon || '',
               sort: item.sort,
-              status: item.status === 1, // 0表示禁用，1表示启用
-              is_show: item.is_show === 1, // 0表示隐藏，1表示显示
+              status: item.status === 1, // -1表示禁用，1表示启用
+              is_show: item.is_show === 1, // -1表示隐藏，1表示显示
               pid: item.pid,
               level: item.level || 1, // 从API获取level，如果没有则默认为1
               parentName: '' // 初始化父级菜单名称字段
@@ -646,7 +646,7 @@ export default {
             icon: this.menuForm.icon,
             sort: this.menuForm.sort,
             status: Number(this.menuForm.status),
-            is_show: Number(this.menuForm.is_show),
+            is_show: this.menuForm.is_show ? 1 : -1,
             pid: this.menuForm.pid,
             level: this.menuForm.level
           };
@@ -672,7 +672,9 @@ export default {
     handleStatusChange(data, value) {
       const index = this.menuList.findIndex(item => item.id === data.id);
       if (index !== -1) {
-        api.get('/Admin/menu/doStatus', { id: data.id, status: Number(value) }).then(res => {
+        // 将开关值转换为1(启用)或-1(禁用)
+        const statusValue = value ? 1 : -1;
+        api.get('/Admin/menu/doStatus', { id: data.id, status: statusValue }).then(res => {
           if (res.result === 1) {
             this.menuList[index].status = value;
             this.$set(this.switchStatus, data.id, value);
@@ -689,7 +691,7 @@ export default {
     handleIsShowChange(data, value) {
       const index = this.menuList.findIndex(item => item.id === data.id);
       if (index !== -1) {
-        api.get('/Admin/menu/doIsShow', { id: data.id, is_show: Number(value) }).then(res => {
+        api.get('/Admin/menu/doIsShow', { id: data.id, is_show: value ? 1 : -1 }).then(res => {
           if (res.result === 1) {
             this.menuList[index].is_show = value;
             this.$set(this.isShow, data.id, value);

@@ -1,8 +1,8 @@
 <template>
   <div class="pagination-container">
     <el-pagination
-      v-model:current-page="currentPage"
-      v-model:page-size="pageSize"
+      :current-page="currentPage"
+      :page-size="innerPageSize"
       :page-sizes="pageSizes"
       :layout="layout"
       :total="total"
@@ -28,14 +28,14 @@ export default {
       default: 1
     },
     // 每页条数
-    limit: {
+    pageSize: {
       type: Number,
       default: 10
     },
     // 可选的每页条数
     pageSizes: {
       type: Array,
-      default: () => [10, 20, 50, 100]
+      default: () => [1, 2, 50, 100]
     },
     // 布局
     layout: {
@@ -51,46 +51,51 @@ export default {
   data() {
     return {
       currentPage: this.page,
-      pageSize: this.limit
+      innerPageSize: this.pageSize
     }
   },
   watch: {
-    page: {
-      immediate: true,
-      handler(val) {
-        this.currentPage = val
+      // 监听props中的page变化，更新内部currentPage
+      page: {
+        immediate: true,
+        handler(val) {
+          this.currentPage = val
+        }
+      },
+      // 监听props中的pageSize变化，更新内部innerPageSize
+      pageSize: {
+        immediate: true,
+        handler(val) {
+          // 确保只在val有值时更新
+          if (val !== undefined) {
+            this.innerPageSize = val
+          }
+        }
       }
-    },
-    limit: {
-      immediate: true,
-      handler(val) {
-        this.pageSize = val
-      }
-    },
-    currentPage: {
-      immediate: true,
-      handler(val) {
-        this.$emit('update:page', val)
-      }
-    },
-    pageSize: {
-      immediate: true,
-      handler(val) {
-        this.$emit('update:limit', val)
-      }
-    }
   },
   methods: {
     handleSizeChange(val) {
-      this.pageSize = val
+      this.innerPageSize = val
+      // 切换每页条数时，重置页码为第1页
+      this.currentPage = 1
+      
+      // 通过.sync机制通知父组件更新
+      this.$emit('update:page', 1)
+      this.$emit('update:pageSize', val)
+      
       if (this.autoFetch) {
-        this.$emit('pagination', { page: this.currentPage, limit: val })
+        this.$emit('pagination', { page: 1, pageSize: val })
       }
     },
     handleCurrentChange(val) {
       this.currentPage = val
+      
+      // 通过.sync机制通知父组件更新
+      this.$emit('update:page', val)
+      
       if (this.autoFetch) {
-        this.$emit('pagination', { page: val, limit: this.pageSize })
+        // 确保使用当前组件内部的pageSize值，而不是props默认值
+        this.$emit('pagination', { page: val, pageSize: this.innerPageSize })
       }
     }
   }

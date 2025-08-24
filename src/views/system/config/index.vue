@@ -126,7 +126,7 @@ export default {
     getVariableList() {
       api.get('/Admin/Config/getList')
         .then(res => {
-          this.configList = res.data || [];
+          this.configList = res.data.list || [];
 
           // 为每个变量添加groupName属性，用于分组显示
           this.configList.forEach(variable => {

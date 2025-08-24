@@ -36,16 +36,6 @@ export const constantRoutes = [
     ]
   },
   {
-    path: '/service',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/service/index.vue'),
-      }
-    ]
-  },
-  {
     path: '/system',
     component: Layout,
     meta: { title: '系统配置', icon: 'el-icon-setting' },

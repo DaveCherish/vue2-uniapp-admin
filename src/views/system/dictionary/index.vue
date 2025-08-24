@@ -390,7 +390,7 @@ export default {
 
       api.post('/Admin/DictItem/doStatus', {
         id: item.id,
-        status: value
+        status: value ? 1 : -1
       })
         .then(res => {
           // 检查res.result是否为成功状态，兼容不同类型的返回值

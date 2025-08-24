@@ -4,14 +4,8 @@
       <div slot="header" class="clearfix">
         <span>角色管理</span>
         <div class="header-buttons">
-          <el-button 
-            type="danger" 
-            size="small" 
-            icon="el-icon-delete" 
-            @click="handleBatchDelete"
-            :disabled="selectedRoles.length === 0"
-            class="btn-batch-delete"
-          >
+          <el-button type="danger" size="small" icon="el-icon-delete" @click="handleBatchDelete"
+            :disabled="selectedRoles.length === 0" class="btn-batch-delete">
             批量删除 ({{ selectedRoles.length }})
           </el-button>
           <el-button type="primary" size="small" icon="el-icon-plus" @click="handleAdd" class="btn-add">
@@ -20,19 +14,18 @@
         </div>
       </div>
       <div class="table-wrapper">
-        <el-table 
-          :data="roleList" 
-          class="list-page-table" 
-          border 
-          stripe 
-          highlight-current-row 
-          fit
-          @selection-change="handleSelectionChange"
-        >
+        <el-table :data="roleList" class="list-page-table" border stripe highlight-current-row fit
+          @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column prop="id" label="角色ID" min-width="80"></el-table-column>
           <el-table-column prop="name" label="角色名称" min-width="180"></el-table-column>
           <el-table-column prop="desc" label="角色描述" width="auto" min-width="200"></el-table-column>
+          <el-table-column label="角色状态" min-width="100">
+            <template slot-scope="scope">
+              <el-switch v-model="switchStatus[scope.row.id]"
+                @change="handleStatusChange(scope.row, $event)"></el-switch>
+            </template>
+          </el-table-column>
           <el-table-column label="操作" fixed="right" min-width="240">
             <template slot-scope="scope">
               <el-button type="primary" size="small" @click="handleEdit(scope.row)">编辑</el-button>
@@ -132,7 +125,7 @@ export default {
         }
       ).then(() => {
         const roleIds = this.selectedRoles.map(role => role.id);
-        
+
         api.post('/Admin/Permission/batchDelete', { ids: roleIds })
           .then(res => {
             if (res.result === 1) {
@@ -172,7 +165,7 @@ export default {
         .then(res => {
           if (res.result == 1) {
             this.roleList = res.data || [];
-            // 初始化开关状态（1表示启用，0表示禁用）
+            // 初始化开关状态（1表示启用，-1表示禁用）
             this.roleList.forEach(item => {
               this.$set(this.switchStatus, item.id, item.status === 1);
             });
@@ -212,9 +205,9 @@ export default {
         type: 'warning'
       }).then(() => {
         // 调用API更新角色状态（true转换为1，false转换为0）
-        api.post('/Admin/Permission/updateStatus', {
+        api.post('/Admin/Permission/doStatus', {
           id: row.id,
-          status: value ? 1 : 0
+          status: value ? 1 : -1
         })
           .then(res => {
             if (res.result == 1) {
@@ -290,7 +283,7 @@ export default {
           // 提交前将status布尔值转换为1/0
           const formData = {
             ...this.roleForm,
-            status: this.roleForm.status ? 1 : 0
+            status: this.roleForm.status ? 1 : -1
           };
           api[apiMethod](apiUrl, formData)
             .then(res => {
@@ -435,11 +428,11 @@ export default {
 .list-page {
   .header-buttons {
     float: right;
-    
+
     .el-button {
       margin-left: 10px;
     }
-    
+
     .btn-batch-delete {
       &:disabled {
         opacity: 0.5;
@@ -447,7 +440,7 @@ export default {
       }
     }
   }
-  
+
   .btn-add {
     // 保持原有样式兼容性
   }

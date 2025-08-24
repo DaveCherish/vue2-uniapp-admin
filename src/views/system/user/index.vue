@@ -60,6 +60,13 @@
           </el-table-column>
         </el-table>
       </div>
+      <!-- 分页组件 -->
+      <pagination
+        :total="total"
+        :page.sync="page"
+        :pageSize.sync="pageSize"
+        @pagination="handlePagination"
+      />
     </el-card>
 
     <!-- 新增/编辑管理员弹窗 -->
@@ -98,8 +105,12 @@
 
 <script>
 import api from '@/utils/api'
+import Pagination from '@/components/Pagination.vue'
 
 export default {
+  components: {
+    Pagination
+  },
   data() {
     return {
       selectedUsers: [], // 存储选中的用户
@@ -145,9 +156,12 @@ export default {
         confirmPassword: [
           { required: true, message: '请确认密码', trigger: 'blur' },
           { validator: this.validateConfirmPassword, trigger: 'blur' }
-        ],
-
-      }
+        ]
+      },
+      // 分页相关属性
+      page: 1,
+      pageSize: 1,
+      total: 0
     };
   },
   mounted() {
@@ -219,9 +233,10 @@ export default {
 
     // 获取管理员列表
     getAdminList() {
-      api.get('/Admin/user/getList').then(res => {
-        this.list = res.data || [];
-        // 初始化开关状态，将status=1映射为true，status=0映射为false
+      api.get('/Admin/user/getList', {page: this.page, pageSize: this.pageSize}).then(res => {
+        this.list = res.data.list || [];
+        this.total = res.data.pagination && res.data.pagination.total || 0;
+        // 初始化开关状态，将status=1映射为true，status=-1映射为false
         this.list.forEach(item => {
           this.$set(this.switchStatus, item.id, item.status === 1);
         });
@@ -237,6 +252,12 @@ export default {
       } else {
         callback();
       }
+    },
+
+    // 处理分页事件
+    handlePagination(params) {
+      // 通过.sync修饰符，page和pageSize已经自动同步，这里只需要重新获取数据
+      this.getAdminList();
     },
     handleAdd() {
       this.dialogTitle = '新增';
@@ -259,7 +280,7 @@ export default {
       this.dialogVisible = true;
     },
     handleStatusChange(row, value) {
-      const status = value ? 1 : 0;
+      const status = value ? 1 : -1;
       const statusText = value ? '启用' : '禁用';
       this.$confirm(`确定要${statusText}管理员 ${row.account} 吗?`, '提示', {
         confirmButtonText: '确定',
@@ -267,7 +288,7 @@ export default {
         type: 'warning'
       }).then(() => {
         // 调用API更新状态
-        api.post('/Admin/user/updateStatus', {
+        api.post('/Admin/user/doStatus', {
           id: row.id,
           status: status
         }).then(res => {
