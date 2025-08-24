@@ -13,7 +13,6 @@
 - **编辑器**：CKEditor 5、Quill
 - **图表**：ECharts 4.9.0
 - **拖拽**：vuedraggable 2.24.3
-- **模拟数据**：Mock.js 1.1.0
 
 ## 运行环境要求
 - **Node.js**：建议使用LTS版本（项目在Node.js v24.4.1上测试通过）
@@ -30,7 +29,6 @@
 - `echarts`: ^4.9.0
 - `element-ui`: ^2.15.14
 - `express`: ^5.1.0
-- `mockjs`: ^1.1.0
 - `quill`: ^1.3.7
 - `vue`: ^2.6.14
 - `vue-echarts`: ^4.1.0

@@ -140,12 +140,12 @@ export default {
     fetchData() {
       // 这里用假数据模拟，实际用接口请求
       // 模拟分页数据
-      const mockTotal = 3350;
-      this.pagination.total = mockTotal;
+      const totalRecords = 3350;
+      this.pagination.total = totalRecords;
       
       // 生成当前页数据
       this.tableData = Array.from({
-        length: Math.min(this.pagination.pageSize, mockTotal - (this.pagination.currentPage - 1) * this.pagination.pageSize)
+        length: Math.min(this.pagination.pageSize, totalRecords - (this.pagination.currentPage - 1) * this.pagination.pageSize)
       }, (_, index) => {
         const id = (this.pagination.currentPage - 1) * this.pagination.pageSize + index + 1;
         return {

@@ -40,8 +40,6 @@ node server.js
 │   │   ├── components/     # 布局子组件
 │   │   └── index.vue       # 主布局
 │   ├── main.js             # 入口文件
-│   ├── mock/               # 模拟数据
-│   │   └── index.js        # 模拟数据入口
 │   ├── router/             # 路由配置
 │   │   └── index.js        # 路由定义
 │   ├── store/              # Vuex状态管理

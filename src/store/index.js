@@ -30,7 +30,7 @@ export default new Vuex.Store({
       return new Promise((resolve, reject) => {
         // 模拟登录验证
         if (username === 'admin' && password === '123456') {
-          const token = 'mock-token-' + Date.now()
+          const token = 'token-' + Date.now()
           commit('SET_TOKEN', token)
           commit('SET_USER', { name: username, username: username })
           resolve()
